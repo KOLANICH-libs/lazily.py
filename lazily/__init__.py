@@ -20,7 +20,6 @@ def ProxyWithWorkaround_(factory, **_delayed):
 
 		def __getattr__(self, key):
 			#print("__getattr__", _delayed is not None, key)
-			spr = super()
 			if _delayed is not None:
 				if key in _delayed:
 					return _delayed[key]
@@ -39,13 +38,11 @@ def ProxyWithWorkaround_(factory, **_delayed):
 							_bootstrapShitTriggers = True
 						
 						if _bootstrapShitTriggers : 
-							return ProxyWithWorkaround_(lambda: spr.__getattr__(key))
+							return ProxyWithWorkaround_(functools.partial(super().__getattr__, key))
 					else:
-						return lazy_object_proxy.Proxy(lambda: spr.__getattr__(key))
-						#print("key", key)
-						#return spr.__getattr__(key)
+						return lazy_object_proxy.Proxy(functools.partial(super().__getattr__, key))
 			else:
-				return lazy_object_proxy.Proxy(lambda: spr.__getattr__(key))
+				return super().__getattr__(key)
 
 		def __setattr__(self, key, value):
 			if _delayed is not None:
@@ -56,8 +53,6 @@ def ProxyWithWorkaround_(factory, **_delayed):
 	@functools.wraps(factory)
 	def factory1(*args, **kwargs):
 		nonlocal _delayed
-		#from traceback import print_stack
-		#print_stack()
 		res = factory(*args, **kwargs)
 		#if _delayed is not None:
 		#	for k, v in _delayed.items():
@@ -216,8 +211,8 @@ class LazyImporter(importlib.abc.MetaPathFinder, importlib.abc.Loader):
 		trueName = module.__spec__.name[len(__class__.marker):]
 		#print(groups.Fore.lightredEx("exec_module")+' "' +groups.Fore.lightcyanEx(module.__spec__.name) + '"' + " in sys.modules :", module.__spec__.name in sys.modules, '"' + groups.Fore.lightcyanEx(trueName) + '"' + " in sys.modules :", trueName in sys.modules)
 		#print("module.__spec__.origin", module.__spec__.submodule_search_locations)
-		mod = ProxyWithWorkaround(genImporterFunc(trueName), __spec__=module.__spec__, __file__=None, __path__=module.__spec__.submodule_search_locations)
-		#mod = ProxyWithWorkaround(genImporterFunc(trueName), __spec__=module.__spec__, __file__=module.__spec__.submodule_search_locations)
+		mod = ProxyWithWorkaround(genImporterFunc(trueName), __spec__=module.__spec__, __path__=module.__spec__.submodule_search_locations)
+		#mod = ProxyWithWorkaround(genImporterFunc(trueName), __spec__=module.__spec__, __path__=module.__spec__.submodule_search_locations)
 		#mod = __import__(trueName)
 		#print("exec_module", trueName, "mod", "(", mod, ")")
 		sys.modules[module.__spec__.name] = mod
