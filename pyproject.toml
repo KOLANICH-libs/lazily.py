@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.2.0", "wheel", "setuptools_scm[toml]>=3.4.3",]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lazily"
+authors = [{name = "KOLANICH"}]
+description = "Imports other modules lazily."
+readme = "ReadMe.md"
+keywords = ["import", "lazy"]
+license = {text = "Unlicense"}
+classifiers = [
+	"Programming Language :: Python",
+	"Programming Language :: Python :: 3",
+	"Development Status :: 4 - Beta",
+	"Environment :: Other Environment",
+	"Intended Audience :: Developers",
+	"License :: Public Domain",
+	"Operating System :: OS Independent",
+]
+urls = {Homepage = "https://codeberg.org/KOLANICH-libs/lazily.py"}
+requires-python = ">=3.4"
+dependencies = ["lazy_object_proxy"]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+tests = [
+	"sideBySideDiff", # @ git+https://codeberg.org/KOLANICH-libs/sideBySideDiff.py.git
+]
+
+[tool.setuptools]
+zip-safe = true
+packages = ["lazily"]
+
+[tool.setuptools_scm]
+
+[tool.pytest.ini_options]
+addopts = "--forked"
+testpaths = ["tests"]
