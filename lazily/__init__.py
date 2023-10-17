@@ -8,6 +8,9 @@ from importlib._bootstrap import _find_spec
 from importlib._bootstrap_external import PathFinder
 import inspect
 import lazy_object_proxy
+from warnings import warn
+
+warn("We have moved from M$ GitHub to https://codeberg.org/KOLANICH-libs/lazily.py , read why on https://codeberg.org/KOLANICH/Fuck-GuanTEEnomo .")
 
 
 _lazilyGlobals = globals()
